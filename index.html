@@ -440,10 +440,6 @@
             background-color: #dc3545;
         }
 
-        .column-type-badge.datetime {
-            background-color: #6f42c1;
-        }
-
         .column-selector {
             margin: 1rem 0;
         }
@@ -1259,40 +1255,43 @@
             let numericCount = 0;
             let textCount = 0;
             
-            for (let i = 0; i < Math.min(data.length, 200); i++) {
+            // Check all rows (up to 200 for performance)
+            for (let i = 0; i < data.length; i++) {
                 const value = data[i][columnName];
                 
-                if (value === null || value === undefined || String(value).trim() === '') {
-                    continue;
-                }
+                // Skip empty, null, undefined values completely - don't count them
+                if (value === null || value === undefined) continue;
+                if (String(value).trim() === '') continue;
                 
+                // Check if it's a number
                 if (typeof value === 'number') {
                     numericCount++;
                 } else {
+                    // Try to parse as number
                     const strValue = String(value).trim();
                     const parsed = parseFloat(strValue);
                     
+                    // It's numeric if it parses and the string looks like a number
                     if (!isNaN(parsed) && /^-?\d*\.?\d+$/.test(strValue)) {
                         numericCount++;
                     } else {
                         textCount++;
                     }
                 }
+                
+                // Stop after checking 200 rows for performance
+                if (i >= 200) break;
             }
             
+            // Column is numeric if it has numeric values and more numeric than text
             return numericCount > 0 && numericCount >= textCount;
         }
 
         function getColumnType(data, columnName) {
             if (isNumericColumn(data, columnName)) {
                 return { type: 'Numeric', class: 'numeric' };
-            } else {
-                const sample = data[0][columnName];
-                if (sample && (sample.includes('/') || sample.includes('-')) && new Date(sample).toString() !== 'Invalid Date') {
-                    return { type: 'DateTime', class: 'datetime' };
-                }
-                return { type: 'Text', class: 'text' };
             }
+            return { type: 'Text', class: 'text' };
         }
 
         function createColumnRenameInterface() {
