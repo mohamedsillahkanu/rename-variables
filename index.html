@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Variable & Value Rename Tool - Blue Dark Theme</title>
+    <title>ICF-SL Variable & Value Rename Tool</title>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <style>
@@ -14,90 +15,148 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-            line-height: 1.6;
-            color: #e1effe;
-            background: linear-gradient(135deg, #0a0e1a 0%, #0f1629 25%, #1a237e 75%, #1565c0 100%);
-            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+            font-family: 'Oswald', Arial, sans-serif;
+            color: #000000;
+            font-weight: 500;
+            padding: 20px;
         }
 
-        .main-header {
-            text-align: center;
-            padding: 3rem 0;
-            background: linear-gradient(135deg, #0d1b2a 0%, #1b263b 25%, #1e3a8a 75%, #2563eb 100%);
-            color: white;
-            margin-bottom: 2rem;
-            border-radius: 0 0 1rem 1rem;
-            box-shadow: 0 8px 32px rgba(37, 99, 235, 0.3);
-            border-bottom: 1px solid rgba(59, 130, 246, 0.2);
-        }
-
-        .main-header h1 {
-            margin-bottom: 0.5rem;
-            font-size: 2.5rem;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
-        }
-
-        .main-header p {
-            font-size: 1.2rem;
-            opacity: 0.9;
-        }
-
-        .container {
-            max-width: 1400px;
+        .page-container {
+            width: 100%;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 0 1rem;
+        }
+
+        .page-header {
+            background-color: #004080;
+            color: #ffffff;
+            padding: 25px 30px;
+            text-align: center;
+            margin-bottom: 15px;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .logo-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            margin-bottom: 15px;
+        }
+
+        .logo-box {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-box img {
+            width: 100px;
+            height: auto;
+            border-radius: 6px;
+        }
+
+        .page-header h3 {
+            margin: 12px 0 5px;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: #ffffff;
+        }
+
+        .page-header .tagline {
+            margin: 0;
+            font-size: 10px;
+            font-weight: 500;
+            color: #ffffff;
+        }
+
+        .page-header h1 {
+            margin: 20px 0 10px;
+            font-size: 24px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 1px;
+        }
+
+        .page-header .subtitle {
+            font-size: 14px;
+            color: #ffffff;
+            font-weight: 500;
+        }
+
+        .content-card {
+            border: 4px double #004080;
+            border-radius: 12px;
+            padding: 12px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 15px;
+        }
+
+        .content-inner {
+            padding: 25px;
         }
 
         .upload-section {
-            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%);
-            backdrop-filter: blur(15px);
+            background: #f8f9fa;
             padding: 2rem;
-            border-radius: 15px;
-            border: 2px dashed #2563eb;
+            border-radius: 8px;
+            border: 2px dashed #004080;
             text-align: center;
-            margin: 2rem 0;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            margin: 1.5rem 0;
             transition: all 0.3s ease;
         }
 
         .upload-section:hover {
-            border-color: #3b82f6;
-            box-shadow: 0 12px 40px rgba(37, 99, 235, 0.2);
+            border-color: #0056b3;
+            background: #e7f3ff;
         }
 
         .upload-section h3 {
-            color: #93c5fd;
+            color: #004080;
             margin-bottom: 1rem;
-            font-size: 1.4rem;
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
         }
 
         .upload-section p {
-            color: #9ca3af;
+            color: #000000;
+            font-weight: 500;
+            font-size: 14px;
         }
 
-        .file-input {
+        .file-input-wrapper {
             position: relative;
             display: inline-block;
             cursor: pointer;
-            background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+            background: #004080;
             color: white;
-            padding: 12px 24px;
-            border-radius: 25px;
-            border: none;
-            font-size: 16px;
+            padding: 14px 24px;
+            border-radius: 6px;
+            border: 2px solid #004080;
+            font-size: 14px;
+            font-weight: 700;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(29, 78, 216, 0.3);
-            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-family: 'Oswald', Arial, sans-serif;
+            margin-top: 1rem;
         }
 
-        .file-input:hover {
-            background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(29, 78, 216, 0.4);
+        .file-input-wrapper:hover {
+            background: #0056b3;
+            border-color: #0056b3;
         }
 
-        .file-input input[type="file"] {
+        .file-input-wrapper input[type="file"] {
             position: absolute;
             left: -9999px;
         }
@@ -113,105 +172,160 @@
         .progress-bar {
             width: 100%;
             height: 20px;
-            background: rgba(30, 64, 175, 0.3);
+            background: #f8f9fa;
             border-radius: 10px;
             overflow: hidden;
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+            border: 2px solid #004080;
         }
 
         .progress-fill {
             height: 100%;
-            background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
-            border-radius: 10px;
+            background: #004080;
+            border-radius: 8px;
             transition: width 0.3s ease;
             width: 0%;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .progress-fill::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            right: 0;
-            background-image: linear-gradient(
-                -45deg,
-                rgba(255, 255, 255, .2) 25%,
-                transparent 25%,
-                transparent 50%,
-                rgba(255, 255, 255, .2) 50%,
-                rgba(255, 255, 255, .2) 75%,
-                transparent 75%,
-                transparent
-            );
-            background-size: 30px 30px;
-            animation: progressAnimation 1s linear infinite;
-        }
-
-        @keyframes progressAnimation {
-            0% {
-                background-position: 0 0;
-            }
-            100% {
-                background-position: 30px 0;
-            }
         }
 
         .progress-text {
             text-align: center;
             margin-top: 0.5rem;
             font-size: 14px;
-            color: #93c5fd;
+            color: #004080;
             font-weight: 500;
         }
 
-        .stats-container {
+        .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 1rem;
-            margin: 2rem 0;
+            margin: 1.5rem 0;
         }
 
         .stats-card {
-            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%);
-            backdrop-filter: blur(15px);
+            background: #f8f9fa;
             padding: 1.5rem;
-            border-radius: 15px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             text-align: center;
-            border-top: 3px solid #2563eb;
-            border: 1px solid rgba(37, 99, 235, 0.2);
-            transition: all 0.3s ease;
+            border: 2px solid #004080;
+            transition: all 0.2s;
         }
 
         .stats-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 40px rgba(37, 99, 235, 0.3);
-            border-color: rgba(59, 130, 246, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0, 64, 128, 0.2);
         }
 
         .stats-card h3 {
-            font-size: 2rem;
-            color: #93c5fd;
+            font-size: 2.5rem;
+            color: #004080;
             margin-bottom: 0.5rem;
             font-weight: 700;
         }
 
         .stats-card p {
-            color: #6b7280;
+            color: #000000;
+            font-weight: 500;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .section-header {
+            background-color: #004080;
+            color: #ffffff;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .section-icon {
+            background: #ffffff;
+            color: #004080;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .btn {
+            padding: 14px 24px;
+            border: 2px solid #004080;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-family: 'Oswald', Arial, sans-serif;
+            transition: all 0.2s;
+            margin: 10px 5px;
+        }
+
+        .btn-primary {
+            background: #004080;
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background: #0056b3;
+            border-color: #0056b3;
+        }
+
+        .btn-secondary {
+            background: #ffffff;
+            color: #004080;
+        }
+
+        .btn-secondary:hover {
+            background: #004080;
+            color: #ffffff;
+        }
+
+        .btn-gold {
+            background: #ffc107;
+            color: #000000;
+            border-color: #ffc107;
+        }
+
+        .btn-gold:hover {
+            background: #e0a800;
+            border-color: #e0a800;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: #ffffff;
+            border-color: #28a745;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+            border-color: #218838;
         }
 
         .rename-tabs {
             display: flex;
-            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%);
-            backdrop-filter: blur(15px);
-            border-radius: 15px 15px 0 0;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-            margin: 2rem 0 0 0;
-            border: 1px solid rgba(37, 99, 235, 0.2);
+            background: #f8f9fa;
+            border-radius: 6px 6px 0 0;
+            margin: 1.5rem 0 0 0;
+            border: 2px solid #004080;
             border-bottom: none;
+            overflow: hidden;
         }
 
         .tab-button {
@@ -220,32 +334,30 @@
             border: none;
             background: transparent;
             cursor: pointer;
-            font-size: 16px;
-            border-radius: 15px 15px 0 0;
+            font-size: 14px;
+            font-weight: 700;
+            font-family: 'Oswald', Arial, sans-serif;
             transition: all 0.3s;
-            color: #9ca3af;
-            font-weight: 600;
+            color: #004080;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .tab-button.active {
-            background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
+            background: #004080;
             color: white;
-            box-shadow: 0 4px 15px rgba(29, 78, 216, 0.3);
         }
 
         .tab-button:not(.active):hover {
-            background: rgba(37, 99, 235, 0.1);
-            color: #93c5fd;
+            background: #e7f3ff;
         }
 
         .rename-section {
-            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%);
-            backdrop-filter: blur(15px);
+            background: #f8f9fa;
             padding: 2rem;
-            border-radius: 0 0 15px 15px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            border-radius: 0 0 6px 6px;
             margin: 0 0 2rem 0;
-            border: 1px solid rgba(37, 99, 235, 0.2);
+            border: 2px solid #004080;
             border-top: none;
         }
 
@@ -258,13 +370,16 @@
         }
 
         .tab-content h3 {
-            color: #93c5fd;
+            color: #004080;
             margin-bottom: 1rem;
+            font-size: 18px;
+            font-weight: 700;
         }
 
         .tab-content p {
-            color: #9ca3af;
+            color: #000000;
             margin-bottom: 1rem;
+            font-weight: 500;
         }
 
         .column-rename-row {
@@ -276,57 +391,57 @@
         }
 
         .column-original {
-            background: rgba(15, 23, 42, 0.9);
-            backdrop-filter: blur(10px);
+            background: #ffffff;
             padding: 1rem;
-            border-radius: 8px;
-            border: 1px solid rgba(30, 64, 175, 0.3);
+            border-radius: 6px;
+            border: 2px solid #004080;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            color: #e1effe;
+            color: #000000;
+            font-weight: 500;
         }
 
         .column-new input {
             width: 100%;
             padding: 1rem;
-            border: 2px solid rgba(30, 64, 175, 0.3);
-            border-radius: 8px;
+            border: 2px solid #004080;
+            border-radius: 6px;
             font-size: 14px;
-            background: rgba(15, 23, 42, 0.9);
-            color: #e1effe;
+            background: #ffffff;
+            color: #000000;
+            font-family: 'Oswald', Arial, sans-serif;
+            font-weight: 500;
             transition: border-color 0.3s ease;
         }
 
         .column-new input:focus {
             outline: none;
-            border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            border-color: #0056b3;
+            box-shadow: 0 0 0 3px rgba(0, 64, 128, 0.1);
         }
 
         .column-type-badge {
-            background-color: #0ea5e9;
             color: white;
-            padding: 0.25rem 0.5rem;
-            border-radius: 12px;
-            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
             margin-left: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .column-type-badge.numeric {
-            background-color: #059669;
+            background-color: #28a745;
         }
 
         .column-type-badge.text {
-            background-color: #dc2626;
+            background-color: #dc3545;
         }
 
         .column-type-badge.datetime {
-            background-color: #7c3aed;
-        }
-
-        .value-rename-section {
-            margin: 1rem 0;
+            background-color: #6f42c1;
         }
 
         .column-selector {
@@ -334,8 +449,8 @@
         }
 
         .column-selector label {
-            color: #93c5fd;
-            font-weight: 600;
+            color: #004080;
+            font-weight: 700;
             margin-bottom: 0.5rem;
             display: block;
         }
@@ -343,21 +458,22 @@
         .column-selector select {
             width: 100%;
             padding: 1rem;
-            border: 2px solid rgba(30, 64, 175, 0.3);
-            border-radius: 8px;
+            border: 2px solid #004080;
+            border-radius: 6px;
             font-size: 14px;
-            background: rgba(15, 23, 42, 0.9);
-            color: #e1effe;
+            background: #ffffff;
+            color: #000000;
+            font-family: 'Oswald', Arial, sans-serif;
+            font-weight: 500;
         }
 
         .value-list {
             max-height: 400px;
             overflow-y: auto;
-            border: 1px solid rgba(30, 64, 175, 0.3);
-            border-radius: 8px;
+            border: 2px solid #004080;
+            border-radius: 6px;
             margin: 1rem 0;
-            background: rgba(15, 23, 42, 0.9);
-            backdrop-filter: blur(15px);
+            background: #ffffff;
         }
 
         .value-item {
@@ -365,7 +481,7 @@
             grid-template-columns: 1fr 1fr auto;
             gap: 1rem;
             padding: 1rem;
-            border-bottom: 1px solid rgba(30, 64, 175, 0.2);
+            border-bottom: 1px solid #dee2e6;
             align-items: center;
             background-color: transparent;
         }
@@ -375,24 +491,26 @@
         }
 
         .value-item:hover {
-            background-color: rgba(37, 99, 235, 0.1);
+            background-color: #e7f3ff;
         }
 
         .value-original {
             font-family: 'Courier New', monospace;
-            background: rgba(30, 64, 175, 0.2);
+            background: #f8f9fa;
             padding: 0.5rem;
             border-radius: 4px;
-            border: 1px solid rgba(30, 64, 175, 0.3);
-            color: #93c5fd;
+            border: 1px solid #004080;
+            color: #004080;
+            font-weight: 500;
         }
 
         .value-count {
-            background-color: #0ea5e9;
+            background-color: #004080;
             color: white;
-            padding: 0.25rem 0.5rem;
-            border-radius: 12px;
-            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
             text-align: center;
             min-width: 50px;
         }
@@ -400,133 +518,87 @@
         .value-new input {
             width: 100%;
             padding: 0.5rem;
-            border: 1px solid rgba(30, 64, 175, 0.3);
+            border: 2px solid #004080;
             border-radius: 4px;
             font-size: 14px;
-            background: rgba(15, 23, 42, 0.9);
-            color: #e1effe;
+            background: #ffffff;
+            color: #000000;
+            font-family: 'Oswald', Arial, sans-serif;
+            font-weight: 500;
         }
 
         .value-new input:focus {
             outline: none;
-            border-color: #2563eb;
-            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
-        }
-
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(29, 78, 216, 0.3);
-        }
-
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(29, 78, 216, 0.4);
-        }
-
-        .btn-secondary {
-            background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(75, 85, 99, 0.3);
-        }
-
-        .btn-secondary:hover {
-            background: linear-gradient(135deg, #4b5563 0%, #6b7280 100%);
-            transform: translateY(-2px);
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, #059669 0%, #047857 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3);
-        }
-
-        .btn-success:hover {
-            background: linear-gradient(135deg, #047857 0%, #065f46 100%);
-            transform: translateY(-2px);
+            border-color: #0056b3;
+            box-shadow: 0 0 0 2px rgba(0, 64, 128, 0.1);
         }
 
         .alert {
             padding: 1rem;
-            border-radius: 10px;
+            border-radius: 6px;
             margin: 1rem 0;
-            backdrop-filter: blur(15px);
+            font-weight: 500;
         }
 
         .alert-success {
-            background: linear-gradient(135deg, rgba(5, 150, 105, 0.2) 0%, rgba(4, 120, 87, 0.2) 100%);
-            border-left: 4px solid #059669;
-            color: #6ee7b7;
+            background: #d4edda;
+            border: 2px solid #28a745;
+            color: #155724;
         }
 
         .alert-warning {
-            background: linear-gradient(135deg, rgba(6, 182, 212, 0.2) 0%, rgba(8, 145, 178, 0.2) 100%);
-            border-left: 4px solid #06b6d4;
-            color: #67e8f9;
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            color: #856404;
         }
 
         .alert-error {
-            background: linear-gradient(135deg, rgba(220, 38, 38, 0.2) 0%, rgba(185, 28, 28, 0.2) 100%);
-            border-left: 4px solid #dc2626;
-            color: #fca5a5;
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+            color: #721c24;
+        }
+
+        .info-message {
+            background: #e7f3ff;
+            color: #004080;
+            padding: 1rem;
+            border-radius: 6px;
+            border: 2px solid #004080;
+            margin: 1rem 0;
+            font-weight: 500;
         }
 
         .results-section {
-            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%);
-            backdrop-filter: blur(15px);
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
             margin: 2rem 0;
-            border: 1px solid rgba(37, 99, 235, 0.2);
-        }
-
-        .results-section h3, .results-section h4 {
-            color: #93c5fd;
-            margin-bottom: 1rem;
         }
 
         .rename-summary {
-            background: linear-gradient(135deg, rgba(5, 150, 105, 0.2) 0%, rgba(4, 120, 87, 0.2) 100%);
-            backdrop-filter: blur(15px);
+            background: #d4edda;
             padding: 1rem;
-            border-radius: 8px;
-            border-left: 4px solid #059669;
+            border-radius: 6px;
+            border-left: 4px solid #28a745;
             margin: 0.5rem 0;
-            color: #6ee7b7;
+            color: #155724;
+            font-weight: 500;
         }
 
         .value-summary {
-            background: linear-gradient(135deg, rgba(14, 165, 233, 0.2) 0%, rgba(2, 132, 199, 0.2) 100%);
-            backdrop-filter: blur(15px);
+            background: #e7f3ff;
             padding: 1rem;
-            border-radius: 8px;
-            border-left: 4px solid #0ea5e9;
+            border-radius: 6px;
+            border-left: 4px solid #004080;
             margin: 0.5rem 0;
-            color: #7dd3fc;
+            color: #004080;
+            font-weight: 500;
         }
 
         .data-preview {
             max-height: 500px;
             overflow: auto;
             margin: 1rem 0;
-            border: 1px solid rgba(30, 64, 175, 0.3);
-            border-radius: 8px;
-            background: rgba(15, 23, 42, 0.9);
-            backdrop-filter: blur(15px);
+            border: 2px solid #004080;
+            border-radius: 6px;
+            background: #ffffff;
         }
 
         .data-table {
@@ -538,69 +610,75 @@
         .data-table td {
             padding: 8px 12px;
             text-align: left;
-            border-bottom: 1px solid rgba(30, 64, 175, 0.2);
+            border-bottom: 1px solid #dee2e6;
             white-space: nowrap;
             min-width: 100px;
-            color: #e1effe;
+            color: #000000;
+            font-weight: 500;
         }
 
         .data-table th {
-            background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(51, 65, 85, 0.95) 100%);
-            backdrop-filter: blur(10px);
+            background: #004080;
+            color: #ffffff;
             position: sticky;
             top: 0;
-            font-weight: 600;
+            font-weight: 700;
             z-index: 10;
-            color: #93c5fd;
         }
 
         .data-table tr:hover {
-            background-color: rgba(37, 99, 235, 0.1);
+            background-color: #e7f3ff;
         }
 
         .download-section {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            display: flex;
+            justify-content: center;
             gap: 1rem;
             margin: 2rem 0;
+            flex-wrap: wrap;
         }
 
         .hidden {
             display: none;
         }
 
-        .features-section {
+        .feature-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin: 2rem 0;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
         }
 
         .feature-card {
-            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%);
-            backdrop-filter: blur(15px);
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(37, 99, 235, 0.2);
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 2px solid #004080;
         }
 
         .feature-card h4 {
-            color: #93c5fd;
+            color: #004080;
             margin-bottom: 1rem;
+            font-size: 16px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .feature-card ol, .feature-card ul {
-            color: #cbd5e1;
-            line-height: 1.6;
+            color: #000000;
+            line-height: 1.8;
+            padding-left: 1.5rem;
         }
 
         .feature-card li {
             margin-bottom: 0.5rem;
+            font-weight: 500;
+            font-size: 14px;
         }
 
         .feature-card strong {
-            color: #bfdbfe;
+            color: #004080;
         }
 
         .comparison-section {
@@ -611,16 +689,17 @@
         }
 
         .comparison-card {
-            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(51, 65, 85, 0.8) 100%);
-            backdrop-filter: blur(15px);
+            background: #f8f9fa;
             padding: 1.5rem;
             border-radius: 8px;
-            border: 1px solid rgba(37, 99, 235, 0.2);
+            border: 2px solid #004080;
         }
 
         .comparison-card h4 {
             margin-bottom: 1rem;
-            color: #93c5fd;
+            color: #004080;
+            font-size: 16px;
+            font-weight: 700;
         }
 
         .column-list {
@@ -631,25 +710,27 @@
         .column-item {
             padding: 0.5rem;
             margin: 0.25rem 0;
-            background: rgba(15, 23, 42, 0.9);
-            backdrop-filter: blur(10px);
+            background: #ffffff;
             border-radius: 4px;
-            border-left: 3px solid #2563eb;
-            color: #e1effe;
+            border-left: 3px solid #004080;
+            color: #000000;
+            font-weight: 500;
+            font-size: 14px;
         }
 
         .bulk-actions {
             margin: 1rem 0;
             padding: 1rem;
-            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(51, 65, 85, 0.8) 100%);
-            backdrop-filter: blur(15px);
-            border-radius: 8px;
-            border: 1px solid rgba(37, 99, 235, 0.2);
+            background: #ffffff;
+            border-radius: 6px;
+            border: 2px solid #004080;
         }
 
         .bulk-actions h5 {
             margin-bottom: 1rem;
-            color: #93c5fd;
+            color: #004080;
+            font-size: 16px;
+            font-weight: 700;
         }
 
         .bulk-action-row {
@@ -662,24 +743,29 @@
 
         .bulk-action-row input, .bulk-action-row select {
             padding: 0.5rem;
-            border: 1px solid rgba(30, 64, 175, 0.3);
+            border: 2px solid #004080;
             border-radius: 4px;
-            background: rgba(15, 23, 42, 0.9);
-            color: #e1effe;
+            background: #ffffff;
+            color: #000000;
+            font-family: 'Oswald', Arial, sans-serif;
+            font-weight: 500;
         }
 
-        .column-count-info {
-            background: linear-gradient(135deg, rgba(14, 165, 233, 0.2) 0%, rgba(2, 132, 199, 0.2) 100%);
-            backdrop-filter: blur(15px);
-            padding: 1rem;
-            border-radius: 8px;
-            margin: 1rem 0;
-            border-left: 4px solid #0ea5e9;
-            color: #7dd3fc;
+        .page-footer {
+            background-color: #004080;
+            color: #ffffff;
+            padding: 20px 30px;
+            text-align: center;
+            font-size: 13px;
+            line-height: 1.7;
+            font-weight: 500;
+            border-radius: 0 0 8px 8px;
         }
 
-        .column-count-info strong {
-            color: #93c5fd;
+        .page-footer p {
+            margin: 6px 0 0;
+            font-size: 12px;
+            color: #ffffff;
         }
 
         /* Scrollbar styling */
@@ -688,266 +774,289 @@
         }
 
         ::-webkit-scrollbar-track {
-            background: rgba(15, 23, 42, 0.8);
+            background: #f8f9fa;
             border-radius: 4px;
         }
 
         ::-webkit-scrollbar-thumb {
-            background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+            background: #004080;
             border-radius: 4px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
-        }
-
-        footer {
-            text-align: center;
-            color: #6b7280;
-            padding: 2rem;
-            margin-top: 3rem;
-            border-top: 1px solid rgba(37, 99, 235, 0.2);
-            background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 41, 59, 0.8) 100%);
-            backdrop-filter: blur(10px);
+            background: #0056b3;
         }
 
         @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .content-inner {
+                padding: 15px;
+            }
+            .logo-row {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .page-header h1 {
+                font-size: 20px;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
             .column-rename-row {
                 grid-template-columns: 1fr;
             }
-            
             .comparison-section {
                 grid-template-columns: 1fr;
             }
-
             .value-item {
                 grid-template-columns: 1fr;
                 gap: 0.5rem;
             }
-
             .bulk-action-row {
                 grid-template-columns: 1fr;
             }
+        }
 
-            .data-table th,
-            .data-table td {
-                min-width: 80px;
-                font-size: 12px;
+        @media print {
+            body {
+                padding: 0;
             }
-
-            .main-header h1 {
-                font-size: 2rem;
-            }
-
-            .container {
-                padding: 0 10px;
-            }
-
-            .upload-section {
-                padding: 1rem;
+            .btn, .file-input-wrapper {
+                display: none;
             }
         }
     </style>
 </head>
 <body>
-    <div class="main-header">
-        <h1>Variable & Value Rename Tool</h1>
-        <p>Rename column variables and their values in your dataset</p>
-    </div>
-
-    <div class="container">
-        <!-- Upload Section -->
-        <div id="uploadSection" class="upload-section">
-            <h3>Upload Your Data File</h3>
-            <p>Upload a CSV or Excel file to rename its column variables and values</p>
-            <label class="file-input">
-                Choose File
-                <input type="file" id="fileInput" accept=".csv,.xlsx,.xls">
-            </label>
-            
-            <!-- Progress Bar -->
-            <div id="progressContainer" class="progress-container hidden">
-                <div class="progress-bar">
-                    <div id="progressFill" class="progress-fill"></div>
+    <div class="page-container">
+        <div class="page-header">
+            <div class="logo-row">
+                <div class="logo-box">
+                    <img src="https://github.com/mohamedsillahkanu/gdp-dashboard-2/raw/6c7463b0d5c3be150aafae695a4bcbbd8aeb1499/ICF-SL.jpg" alt="ICF-SL Logo">
                 </div>
-                <div id="progressText" class="progress-text">Uploading...</div>
             </div>
+            <h3>Informatics Consultancy Firm-Sierra Leone<br>(ICF-SL)</h3>
+            <p class="tagline"><em>Driving Data-Driven Solutions for Health and Development</em></p>
+            <h1>VARIABLE & VALUE RENAME TOOL</h1>
+            <p class="subtitle">Rename Column Variables and Their Values in Your Dataset</p>
         </div>
 
-        <!-- File Info -->
-        <div id="fileInfo" class="hidden">
-            <div class="stats-container">
-                <div class="stats-card">
-                    <h3 id="rowCount">0</h3>
-                    <p>Rows</p>
-                </div>
-                <div class="stats-card">
-                    <h3 id="colCount">0</h3>
-                    <p>Columns</p>
-                </div>
-                <div class="stats-card">
-                    <h3 id="numericCount">0</h3>
-                    <p>Numeric</p>
-                </div>
-                <div class="stats-card">
-                    <h3 id="textCount">0</h3>
-                    <p>Text</p>
-                </div>
-            </div>
-        </div>
+        <div class="content-card">
+            <div class="content-inner">
 
-        <!-- Alerts -->
-        <div id="alertContainer"></div>
-
-        <!-- Rename Section with Tabs -->
-        <div id="renameSection" class="hidden">
-            <div class="rename-tabs">
-                <button class="tab-button active" onclick="switchTab('columns')">Rename Columns</button>
-                <button class="tab-button" onclick="switchTab('values')">Rename Values</button>
-            </div>
-            
-            <div class="rename-section">
-                <!-- Column Renaming Tab -->
-                <div id="columnsTab" class="tab-content active">
-                    <h3>Rename Column Variables</h3>
-                    <p>Enter new names for the columns you want to rename. Leave blank to keep the original name.</p>
+                <!-- Upload Section -->
+                <div id="uploadSection" class="upload-section">
+                    <h3>UPLOAD YOUR DATA FILE</h3>
+                    <p>Upload a CSV or Excel file to rename its column variables and values</p>
+                    <label class="file-input-wrapper">
+                        Choose File
+                        <input type="file" id="fileInput" accept=".csv,.xlsx,.xls">
+                    </label>
                     
-                    <div class="column-count-info">
-                        <strong>Total Columns Found: <span id="totalColumnsFound">0</span></strong>
-                        <p>All columns from your dataset are listed below:</p>
+                    <!-- Progress Bar -->
+                    <div id="progressContainer" class="progress-container hidden">
+                        <div class="progress-bar">
+                            <div id="progressFill" class="progress-fill"></div>
+                        </div>
+                        <div id="progressText" class="progress-text">Uploading...</div>
+                    </div>
+                </div>
+
+                <!-- File Info -->
+                <div id="fileInfo" class="hidden">
+                    <div class="section-header">
+                        <span class="section-icon">📊</span>
+                        <span class="section-title">FILE STATISTICS</span>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stats-card">
+                            <h3 id="rowCount">0</h3>
+                            <p>Rows</p>
+                        </div>
+                        <div class="stats-card">
+                            <h3 id="colCount">0</h3>
+                            <p>Columns</p>
+                        </div>
+                        <div class="stats-card">
+                            <h3 id="numericCount">0</h3>
+                            <p>Numeric</p>
+                        </div>
+                        <div class="stats-card">
+                            <h3 id="textCount">0</h3>
+                            <p>Text</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Alerts -->
+                <div id="alertContainer"></div>
+
+                <!-- Rename Section with Tabs -->
+                <div id="renameSection" class="hidden">
+                    <div class="rename-tabs">
+                        <button class="tab-button active" onclick="switchTab('columns')">Rename Columns</button>
+                        <button class="tab-button" onclick="switchTab('values')">Rename Values</button>
                     </div>
                     
-                    <div id="columnList"></div>
-                </div>
-
-                <!-- Value Renaming Tab -->
-                <div id="valuesTab" class="tab-content">
-                    <h3>Rename Column Values</h3>
-                    <p>Select a column and rename its unique values. This is useful for renaming categories, labels, or codes.</p>
-                    
-                    <div class="column-selector">
-                        <label for="valueColumnSelect"><strong>Select Column:</strong></label>
-                        <select id="valueColumnSelect" onchange="loadColumnValues()">
-                            <option value="">Choose a column to rename its values...</option>
-                        </select>
-                    </div>
-
-                    <div id="valueRenameContainer" class="hidden">
-                        <div class="bulk-actions">
-                            <h5>Bulk Actions</h5>
-                            <div class="bulk-action-row">
-                                <input type="text" id="findText" placeholder="Find text (e.g., 'old_')">
-                                <input type="text" id="replaceText" placeholder="Replace with (e.g., 'new_')">
-                                <button class="btn btn-secondary" onclick="bulkReplace()">Replace All</button>
+                    <div class="rename-section">
+                        <!-- Column Renaming Tab -->
+                        <div id="columnsTab" class="tab-content active">
+                            <h3>RENAME COLUMN VARIABLES</h3>
+                            <p>Enter new names for the columns you want to rename. Leave blank to keep the original name.</p>
+                            
+                            <div class="info-message">
+                                <strong>Total Columns Found: <span id="totalColumnsFound">0</span></strong>
+                                <p style="margin: 0.5rem 0 0 0;">All columns from your dataset are listed below:</p>
                             </div>
-                            <div class="bulk-action-row">
-                                <select id="transformSelect">
-                                    <option value="">Choose transformation...</option>
-                                    <option value="uppercase">UPPERCASE</option>
-                                    <option value="lowercase">lowercase</option>
-                                    <option value="capitalize">Capitalize First Letter</option>
-                                    <option value="title">Title Case</option>
-                                </select>
-                                <span></span>
-                                <button class="btn btn-secondary" onclick="bulkTransform()">Apply Transform</button>
-                            </div>
+                            
+                            <div id="columnList"></div>
                         </div>
 
-                        <div id="valueList" class="value-list"></div>
+                        <!-- Value Renaming Tab -->
+                        <div id="valuesTab" class="tab-content">
+                            <h3>RENAME COLUMN VALUES</h3>
+                            <p>Select a column and rename its unique values. This is useful for renaming categories, labels, or codes.</p>
+                            
+                            <div class="column-selector">
+                                <label for="valueColumnSelect"><strong>Select Column:</strong></label>
+                                <select id="valueColumnSelect" onchange="loadColumnValues()">
+                                    <option value="">Choose a column to rename its values...</option>
+                                </select>
+                            </div>
+
+                            <div id="valueRenameContainer" class="hidden">
+                                <div class="bulk-actions">
+                                    <h5>BULK ACTIONS</h5>
+                                    <div class="bulk-action-row">
+                                        <input type="text" id="findText" placeholder="Find text (e.g., 'old_')">
+                                        <input type="text" id="replaceText" placeholder="Replace with (e.g., 'new_')">
+                                        <button class="btn btn-secondary" onclick="bulkReplace()">Replace All</button>
+                                    </div>
+                                    <div class="bulk-action-row">
+                                        <select id="transformSelect">
+                                            <option value="">Choose transformation...</option>
+                                            <option value="uppercase">UPPERCASE</option>
+                                            <option value="lowercase">lowercase</option>
+                                            <option value="capitalize">Capitalize First Letter</option>
+                                            <option value="title">Title Case</option>
+                                        </select>
+                                        <span></span>
+                                        <button class="btn btn-secondary" onclick="bulkTransform()">Apply Transform</button>
+                                    </div>
+                                </div>
+
+                                <div id="valueList" class="value-list"></div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 2rem; text-align: center;">
+                            <button class="btn btn-gold" onclick="applyChanges()">Apply All Changes</button>
+                            <button class="btn btn-secondary" onclick="resetFile()">Upload New File</button>
+                        </div>
                     </div>
                 </div>
-                
-                <div style="margin-top: 2rem; text-align: center;">
-                    <button class="btn btn-primary" onclick="applyChanges()">Apply All Changes</button>
-                    <button class="btn btn-secondary" onclick="resetFile()" style="margin-left: 1rem;">Upload New File</button>
+
+                <!-- Results Section -->
+                <div id="resultsSection" class="results-section hidden">
+                    <div class="section-header">
+                        <span class="section-icon">✓</span>
+                        <span class="section-title">RENAME RESULTS</span>
+                    </div>
+                    
+                    <h4 style="color: #004080; margin: 1rem 0;">Summary of Changes</h4>
+                    <div id="renameSummary"></div>
+                    
+                    <h4 style="color: #004080; margin: 1.5rem 0 1rem;">Dataset with Renamed Variables & Values</h4>
+                    <div class="info-message">
+                        <strong>Displaying ALL <span id="displayedColumns">0</span> columns and first 100 rows</strong>
+                        <p style="margin: 0.5rem 0 0 0;">Scroll horizontally to see all columns. Use the download options to get the complete dataset.</p>
+                    </div>
+                    
+                    <div class="data-preview">
+                        <table class="data-table" id="dataTable"></table>
+                    </div>
+                    
+                    <div class="comparison-section">
+                        <div class="comparison-card">
+                            <h4>Original Columns (<span id="originalColumnCount">0</span>)</h4>
+                            <div class="column-list" id="originalColumns"></div>
+                        </div>
+                        <div class="comparison-card">
+                            <h4>New Columns (<span id="newColumnCount">0</span>)</h4>
+                            <div class="column-list" id="newColumns"></div>
+                        </div>
+                    </div>
+                    
+                    <h4 style="color: #004080; margin: 1.5rem 0 1rem;">Download Renamed Dataset</h4>
+                    <div class="download-section">
+                        <button class="btn btn-gold" onclick="downloadCSV()">Download as CSV</button>
+                        <button class="btn btn-primary" onclick="downloadExcel()">Download as Excel</button>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 2rem;">
+                        <button class="btn btn-secondary" onclick="backToRename()">Make More Changes</button>
+                    </div>
                 </div>
+
+                <!-- Features Section -->
+                <div id="featuresSection">
+                    <div class="section-header">
+                        <span class="section-icon">?</span>
+                        <span class="section-title">HOW IT WORKS</span>
+                    </div>
+                    
+                    <div class="feature-grid">
+                        <div class="feature-card">
+                            <h4>Column Renaming</h4>
+                            <ol>
+                                <li><strong>Upload File:</strong> CSV or Excel file with your data</li>
+                                <li><strong>View Columns:</strong> See all column names with their data types</li>
+                                <li><strong>Enter New Names:</strong> Type new names for columns you want to rename</li>
+                                <li><strong>Apply Changes:</strong> Generate dataset with new column names</li>
+                            </ol>
+                        </div>
+                        
+                        <div class="feature-card">
+                            <h4>Value Renaming</h4>
+                            <ol>
+                                <li><strong>Select Column:</strong> Choose which column's values to rename</li>
+                                <li><strong>View Unique Values:</strong> See all unique values and their frequencies</li>
+                                <li><strong>Rename Values:</strong> Enter new names for specific values</li>
+                                <li><strong>Bulk Operations:</strong> Use find/replace and transformations</li>
+                            </ol>
+                        </div>
+                        
+                        <div class="feature-card">
+                            <h4>Features</h4>
+                            <ul>
+                                <li>Visual column type indicators</li>
+                                <li>Value frequency counts</li>
+                                <li>Bulk find/replace operations</li>
+                                <li>Text transformations (case changes)</li>
+                                <li>Duplicate validation</li>
+                                <li>Before/after comparison</li>
+                                <li>Excel and CSV downloads</li>
+                                <li>ALL columns preserved and displayed</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
 
-        <!-- Results Section -->
-        <div id="resultsSection" class="results-section hidden">
-            <h3>Rename Results</h3>
-            
-            <h4>Summary of Changes</h4>
-            <div id="renameSummary"></div>
-            
-            <h4>Dataset with Renamed Variables & Values</h4>
-            <div class="column-count-info">
-                <strong>Displaying ALL <span id="displayedColumns">0</span> columns and first 100 rows</strong>
-                <p>Scroll horizontally to see all columns. Use the download options to get the complete dataset.</p>
-            </div>
-            
-            <div class="data-preview">
-                <table class="data-table" id="dataTable"></table>
-            </div>
-            
-            <div class="comparison-section">
-                <div class="comparison-card">
-                    <h4>Original Columns (<span id="originalColumnCount">0</span>)</h4>
-                    <div class="column-list" id="originalColumns"></div>
-                </div>
-                <div class="comparison-card">
-                    <h4>New Columns (<span id="newColumnCount">0</span>)</h4>
-                    <div class="column-list" id="newColumns"></div>
-                </div>
-            </div>
-            
-            <h4>Download Renamed Dataset</h4>
-            <div class="download-section">
-                <button class="btn btn-primary" onclick="downloadCSV()">Download as CSV</button>
-                <button class="btn btn-primary" onclick="downloadExcel()">Download as Excel</button>
-            </div>
-            
-            <div style="text-align: center; margin-top: 2rem;">
-                <button class="btn btn-secondary" onclick="backToRename()">Make More Changes</button>
-            </div>
-        </div>
-
-        <!-- Features Section -->
-        <div id="featuresSection">
-            <h3>How It Works</h3>
-            <div class="features-section">
-                <div class="feature-card">
-                    <h4>Column Renaming:</h4>
-                    <ol>
-                        <li><strong>Upload File:</strong> CSV or Excel file with your data</li>
-                        <li><strong>View Columns:</strong> See all column names with their data types</li>
-                        <li><strong>Enter New Names:</strong> Type new names for columns you want to rename</li>
-                        <li><strong>Apply Changes:</strong> Generate dataset with new column names</li>
-                    </ol>
-                </div>
-                
-                <div class="feature-card">
-                    <h4>Value Renaming:</h4>
-                    <ol>
-                        <li><strong>Select Column:</strong> Choose which column's values to rename</li>
-                        <li><strong>View Unique Values:</strong> See all unique values and their frequencies</li>
-                        <li><strong>Rename Values:</strong> Enter new names for specific values</li>
-                        <li><strong>Bulk Operations:</strong> Use find/replace and transformations</li>
-                    </ol>
-                </div>
-                
-                <div class="feature-card">
-                    <h4>Features:</h4>
-                    <ul>
-                        <li>Visual column type indicators</li>
-                        <li>Value frequency counts</li>
-                        <li>Bulk find/replace operations</li>
-                        <li>Text transformations (case changes)</li>
-                        <li>Duplicate validation</li>
-                        <li>Before/after comparison</li>
-                        <li>Detailed change log</li>
-                        <li>Excel and CSV downloads</li>
-                        <li>ALL columns preserved and displayed</li>
-                    </ul>
-                </div>
-            </div>
+        <div class="page-footer">
+            <p style="margin: 0; font-weight: 700;">National Malaria Control Programme</p>
+            <p>Ministry of Health and Sanitation, Sierra Leone</p>
+            <p style="font-size: 11px;">Medical Stores Compound, Freetown, Sierra Leone</p>
+            <p style="font-size: 10px;">© 2025 Informatics Consultancy Firm-Sierra Leone (ICF-SL)</p>
         </div>
     </div>
-
-    <footer>
-        <p>Variable & Value Rename Tool v3.1 | Built with HTML, CSS & JavaScript</p>
-    </footer>
 
     <script>
         let currentData = null;
@@ -962,11 +1071,9 @@
         function switchTab(tab) {
             activeTab = tab;
             
-            // Update tab buttons
             document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
             document.querySelector(`[onclick="switchTab('${tab}')"]`).classList.add('active');
             
-            // Update tab content
             document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
             document.getElementById(tab + 'Tab').classList.add('active');
         }
@@ -990,7 +1097,6 @@
             const progressContainer = document.getElementById('progressContainer');
             progressContainer.classList.add('hidden');
             
-            // Reset progress bar
             setTimeout(() => {
                 const progressFill = document.getElementById('progressFill');
                 const progressText = document.getElementById('progressText');
@@ -1006,7 +1112,6 @@
             const fileName = file.name;
             const fileExtension = fileName.split('.').pop().toLowerCase();
 
-            // Show progress bar
             showProgress('Uploading file...', 10);
 
             if (fileExtension === 'csv') {
@@ -1015,13 +1120,10 @@
                 Papa.parse(file, {
                     header: true,
                     skipEmptyLines: true,
-                    dynamicTyping: false, // Keep as strings to preserve all data
+                    dynamicTyping: false,
                     complete: function(results) {
                         showProgress('Processing data...', 80);
                         setTimeout(() => {
-                            console.log('CSV Results:', results);
-                            console.log('CSV Data length:', results.data.length);
-                            console.log('CSV Meta:', results.meta);
                             processData(results.data, fileName);
                             hideProgress();
                         }, 500);
@@ -1031,7 +1133,6 @@
                         showAlert('Error reading CSV file: ' + error.message, 'error');
                     },
                     step: function(row, parser) {
-                        // Update progress during parsing for large files
                         const progress = Math.min(30 + (parser.cursor / file.size) * 40, 70);
                         updateProgress(progress);
                     }
@@ -1057,13 +1158,10 @@
                             const workbook = XLSX.read(data, {type: 'array'});
                             const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
                             const jsonData = XLSX.utils.sheet_to_json(firstSheet, {
-                                header: 1, // Get raw data first
-                                defval: '' // Default value for empty cells
+                                header: 1,
+                                defval: ''
                             });
                             
-                            console.log('Excel Raw Data:', jsonData);
-                            
-                            // Convert to proper object format with all columns
                             const headers = jsonData[0] || [];
                             const processedData = jsonData.slice(1).map(row => {
                                 const obj = {};
@@ -1072,9 +1170,6 @@
                                 });
                                 return obj;
                             });
-                            
-                            console.log('Excel Processed Data:', processedData);
-                            console.log('Excel Headers:', headers);
                             
                             showProgress('Finalizing...', 95);
                             setTimeout(() => {
@@ -1102,15 +1197,11 @@
         }
 
         function processData(data, fileName) {
-            console.log('Processing data:', data);
-            console.log('Data length:', data.length);
-            
             if (!data || data.length === 0) {
                 showAlert('The file appears to be empty or invalid.', 'error');
                 return;
             }
 
-            // Get ALL column names from the first row
             const firstRow = data[0];
             if (!firstRow || typeof firstRow !== 'object') {
                 showAlert('Invalid data format detected.', 'error');
@@ -1118,10 +1209,7 @@
             }
 
             originalColumns = Object.keys(firstRow);
-            console.log('All original columns found:', originalColumns);
-            console.log('Total columns count:', originalColumns.length);
             
-            // Filter out completely empty rows
             currentData = data.filter(row => {
                 return originalColumns.some(col => {
                     const value = row[col];
@@ -1129,8 +1217,6 @@
                 });
             });
 
-            console.log('Filtered data length:', currentData.length);
-            
             if (currentData.length === 0) {
                 showAlert('No valid data rows found in the file.', 'error');
                 return;
@@ -1138,14 +1224,10 @@
 
             showAlert('File uploaded successfully! Found ' + originalColumns.length + ' columns and ' + currentData.length + ' data rows.', 'success');
             
-            // Update file info
             updateFileStats(currentData, fileName);
-            
-            // Create interfaces
             createColumnRenameInterface();
             populateColumnSelector();
             
-            // Show sections
             document.getElementById('uploadSection').style.display = 'none';
             document.getElementById('featuresSection').style.display = 'none';
             document.getElementById('fileInfo').classList.remove('hidden');
@@ -1174,17 +1256,31 @@
         }
 
         function isNumericColumn(data, columnName) {
-            const sample = data.slice(0, Math.min(100, data.length));
             let numericCount = 0;
+            let textCount = 0;
             
-            for (let row of sample) {
-                const value = row[columnName];
-                if (value !== null && value !== undefined && value !== '' && !isNaN(Number(value))) {
+            for (let i = 0; i < Math.min(data.length, 200); i++) {
+                const value = data[i][columnName];
+                
+                if (value === null || value === undefined || String(value).trim() === '') {
+                    continue;
+                }
+                
+                if (typeof value === 'number') {
                     numericCount++;
+                } else {
+                    const strValue = String(value).trim();
+                    const parsed = parseFloat(strValue);
+                    
+                    if (!isNaN(parsed) && /^-?\d*\.?\d+$/.test(strValue)) {
+                        numericCount++;
+                    } else {
+                        textCount++;
+                    }
                 }
             }
             
-            return sample.length > 0 && (numericCount / sample.length) > 0.7;
+            return numericCount > 0 && numericCount >= textCount;
         }
 
         function getColumnType(data, columnName) {
@@ -1202,8 +1298,6 @@
         function createColumnRenameInterface() {
             const container = document.getElementById('columnList');
             container.innerHTML = '';
-
-            console.log('Creating interface for columns:', originalColumns);
 
             originalColumns.forEach((column, index) => {
                 const columnType = getColumnType(currentData, column);
@@ -1244,7 +1338,6 @@
                 return;
             }
 
-            // Get unique values and their counts
             const valueCounts = {};
             currentData.forEach(row => {
                 const value = row[selectedColumn];
@@ -1252,10 +1345,8 @@
                 valueCounts[key] = (valueCounts[key] || 0) + 1;
             });
 
-            // Sort by frequency (descending)
             const sortedValues = Object.entries(valueCounts).sort((a, b) => b[1] - a[1]);
 
-            // Create value rename interface
             const container = document.getElementById('valueList');
             container.innerHTML = '';
 
@@ -1347,7 +1438,6 @@
         }
 
         function applyChanges() {
-            // Collect column renames
             const columnRenames = {};
             let hasColumnChanges = false;
 
@@ -1362,7 +1452,6 @@
                 }
             });
 
-            // Collect value renames
             const valueRenames = {};
             const selectedColumn = document.getElementById('valueColumnSelect').value;
             let hasValueChanges = false;
@@ -1386,7 +1475,6 @@
                 return;
             }
 
-            // Validate changes
             const validation = validateAllChanges(columnRenames, valueRenames);
             
             if (validation.errors.length > 0) {
@@ -1402,19 +1490,14 @@
                 });
             }
 
-            // Apply all changes
             try {
                 renamedData = applyAllRenames(currentData, columnRenames, valueRenames);
                 columnRenameMapping = columnRenames;
                 valueRenameMapping = valueRenames;
                 
-                console.log('Applied changes. New data columns:', Object.keys(renamedData[0]));
-                console.log('New data length:', renamedData.length);
-                
                 showAlert('All changes applied successfully!', 'success');
                 showResults();
             } catch (error) {
-                console.error('Error applying changes:', error);
                 showAlert('Error applying changes: ' + error.message, 'error');
             }
         }
@@ -1423,11 +1506,9 @@
             const errors = [];
             const warnings = [];
 
-            // Validate column renames
             const newColumnNames = Object.values(columnRenames);
             const allFinalColumnNames = [...newColumnNames, ...originalColumns.filter(col => !columnRenames[col])];
 
-            // Check for duplicate column names
             const columnNameCount = {};
             allFinalColumnNames.forEach(name => {
                 columnNameCount[name] = (columnNameCount[name] || 0) + 1;
@@ -1439,7 +1520,6 @@
                 }
             });
 
-            // Check for invalid characters in column names
             const invalidChars = ['/', '\\', '?', '*', '[', ']', ':', '<', '>', '|'];
             Object.entries(columnRenames).forEach(([oldName, newName]) => {
                 if (invalidChars.some(char => newName.includes(char))) {
@@ -1447,7 +1527,6 @@
                 }
             });
 
-            // Validate value renames
             Object.entries(valueRenames).forEach(([column, renames]) => {
                 const newValues = Object.values(renames);
                 const duplicateValues = newValues.filter((value, index) => newValues.indexOf(value) !== index);
@@ -1464,14 +1543,10 @@
             return data.map(row => {
                 const newRow = {};
                 
-                // Process ALL columns from original data
                 originalColumns.forEach(key => {
                     const value = row[key];
-                    
-                    // Apply column rename
                     const newKey = columnRenames[key] || key;
                     
-                    // Apply value rename if applicable
                     let newValue = value;
                     if (valueRenames[key] && valueRenames[key][value] !== undefined) {
                         newValue = valueRenames[key][value];
@@ -1485,15 +1560,12 @@
         }
 
         function showResults() {
-            // Hide rename section, show results
             document.getElementById('renameSection').classList.add('hidden');
             document.getElementById('resultsSection').classList.remove('hidden');
 
-            // Show rename summary
             const summaryContainer = document.getElementById('renameSummary');
             summaryContainer.innerHTML = '';
             
-            // Column renames summary
             if (Object.keys(columnRenameMapping).length > 0) {
                 Object.entries(columnRenameMapping).forEach(([oldName, newName]) => {
                     const div = document.createElement('div');
@@ -1503,7 +1575,6 @@
                 });
             }
 
-            // Value renames summary
             Object.entries(valueRenameMapping).forEach(([column, renames]) => {
                 if (Object.keys(renames).length > 0) {
                     Object.entries(renames).forEach(([oldValue, newValue]) => {
@@ -1515,26 +1586,22 @@
                 }
             });
 
-            // Overall statistics
             const totalColumnRenames = Object.keys(columnRenameMapping).length;
             const totalValueRenames = Object.values(valueRenameMapping).reduce((total, renames) => 
                 total + Object.keys(renames).length, 0);
             const totalUnchangedColumns = originalColumns.length - totalColumnRenames;
             
             summaryContainer.insertAdjacentHTML('beforeend', `
-                <div style="margin-top: 1rem; padding: 1rem; background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(51, 65, 85, 0.8) 100%); backdrop-filter: blur(15px); border-radius: 8px;">
-                    <p><strong>Summary:</strong></p>
-                    <p><strong>Total original columns:</strong> ${originalColumns.length}</p>
-                    <p><strong>Columns renamed:</strong> ${totalColumnRenames}</p>
-                    <p><strong>Values renamed:</strong> ${totalValueRenames}</p>
-                    <p><strong>Unchanged columns:</strong> ${totalUnchangedColumns}</p>
+                <div class="info-message" style="margin-top: 1rem;">
+                    <p style="margin: 0;"><strong>Summary:</strong></p>
+                    <p style="margin: 0.25rem 0;"><strong>Total original columns:</strong> ${originalColumns.length}</p>
+                    <p style="margin: 0.25rem 0;"><strong>Columns renamed:</strong> ${totalColumnRenames}</p>
+                    <p style="margin: 0.25rem 0;"><strong>Values renamed:</strong> ${totalValueRenames}</p>
+                    <p style="margin: 0.25rem 0;"><strong>Unchanged columns:</strong> ${totalUnchangedColumns}</p>
                 </div>
             `);
 
-            // Show data table with ALL columns
             createDataTable();
-            
-            // Show column comparison
             showColumnComparison();
         }
 
@@ -1543,31 +1610,25 @@
             table.innerHTML = '';
 
             if (!renamedData || renamedData.length === 0) {
-                console.error('No renamed data available');
                 return;
             }
 
             const allColumns = Object.keys(renamedData[0]);
-            console.log('Creating table with ALL columns:', allColumns);
-            
-            // Update the displayed columns count
             document.getElementById('displayedColumns').textContent = allColumns.length;
 
-            // Create header with ALL columns
             const thead = document.createElement('thead');
             const headerRow = document.createElement('tr');
             
             allColumns.forEach(column => {
                 const th = document.createElement('th');
                 th.textContent = column;
-                th.title = `Column: ${column}`; // Tooltip for long column names
+                th.title = `Column: ${column}`;
                 headerRow.appendChild(th);
             });
             
             thead.appendChild(headerRow);
             table.appendChild(thead);
 
-            // Create body with first 100 rows but ALL columns
             const tbody = document.createElement('tbody');
             const displayData = renamedData.slice(0, 100);
             
@@ -1577,7 +1638,7 @@
                     const td = document.createElement('td');
                     const value = row[column];
                     td.textContent = value !== null && value !== undefined ? String(value) : '';
-                    td.title = td.textContent; // Tooltip for long values
+                    td.title = td.textContent;
                     tr.appendChild(td);
                 });
                 tbody.appendChild(tr);
@@ -1585,11 +1646,11 @@
             
             table.appendChild(tbody);
 
-            if (renamedData.length > 100) {
-                table.insertAdjacentHTML('afterend', `<p style="color: #6b7280; padding: 1rem; text-align: center;"><em>Showing first 100 rows of ${renamedData.length} total rows. All ${allColumns.length} columns are displayed. Scroll horizontally to see all columns.</em></p>`);
-            } else {
-                table.insertAdjacentHTML('afterend', `<p style="color: #6b7280; padding: 1rem; text-align: center;"><em>Showing all ${renamedData.length} rows and all ${allColumns.length} columns. Scroll horizontally to see all columns.</em></p>`);
-            }
+            const noteText = renamedData.length > 100 
+                ? `Showing first 100 rows of ${renamedData.length} total rows. All ${allColumns.length} columns are displayed.`
+                : `Showing all ${renamedData.length} rows and all ${allColumns.length} columns.`;
+            
+            table.insertAdjacentHTML('afterend', `<p style="color: #666; padding: 1rem; text-align: center; font-size: 13px;"><em>${noteText}</em></p>`);
         }
 
         function showColumnComparison() {
@@ -1599,11 +1660,9 @@
             originalContainer.innerHTML = '';
             newContainer.innerHTML = '';
 
-            // Update counts
             document.getElementById('originalColumnCount').textContent = originalColumns.length;
             document.getElementById('newColumnCount').textContent = Object.keys(renamedData[0]).length;
 
-            // Original columns
             originalColumns.forEach(col => {
                 const div = document.createElement('div');
                 div.className = 'column-item';
@@ -1612,12 +1671,10 @@
                 originalContainer.appendChild(div);
             });
 
-            // New columns
             Object.keys(renamedData[0]).forEach(col => {
                 const div = document.createElement('div');
                 div.className = 'column-item';
                 
-                // Find original name
                 const originalName = Object.entries(columnRenameMapping).find(([old, new_]) => new_ === col)?.[0];
                 
                 if (originalName) {
@@ -1632,8 +1689,6 @@
 
         function downloadCSV() {
             if (!renamedData) return;
-
-            console.log('Downloading CSV with columns:', Object.keys(renamedData[0]));
             
             const csv = Papa.unparse(renamedData);
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -1651,17 +1706,12 @@
         function downloadExcel() {
             if (!renamedData) return;
 
-            console.log('Downloading Excel with columns:', Object.keys(renamedData[0]));
-
-            // Create workbook with renamed data
             const wb = XLSX.utils.book_new();
             const ws = XLSX.utils.json_to_sheet(renamedData);
             XLSX.utils.book_append_sheet(wb, ws, 'Renamed_Data');
 
-            // Create change log sheet
             const logData = [];
             
-            // Add column renames to log
             Object.entries(columnRenameMapping).forEach(([oldName, newName]) => {
                 logData.push({
                     Type: 'Column Rename',
@@ -1672,7 +1722,6 @@
                 });
             });
 
-            // Add value renames to log
             Object.entries(valueRenameMapping).forEach(([column, renames]) => {
                 Object.entries(renames).forEach(([oldValue, newValue]) => {
                     logData.push({
@@ -1690,7 +1739,6 @@
                 XLSX.utils.book_append_sheet(wb, logWs, 'Change_Log');
             }
 
-            // Download file
             XLSX.writeFile(wb, `renamed_dataset_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.xlsx`);
             showAlert('Excel file downloaded with all ' + Object.keys(renamedData[0]).length + ' columns!', 'success');
         }
@@ -1701,7 +1749,6 @@
         }
 
         function resetFile() {
-            // Reset all data
             currentData = null;
             originalColumns = [];
             renamedData = null;
@@ -1709,7 +1756,6 @@
             valueRenameMapping = {};
             activeTab = 'columns';
             
-            // Reset UI
             document.getElementById('uploadSection').style.display = 'block';
             document.getElementById('featuresSection').style.display = 'block';
             document.getElementById('fileInfo').classList.add('hidden');
@@ -1719,7 +1765,6 @@
             document.getElementById('fileInput').value = '';
             document.getElementById('alertContainer').innerHTML = '';
             
-            // Reset to columns tab
             switchTab('columns');
         }
 
@@ -1731,7 +1776,6 @@
             
             alertContainer.appendChild(alertDiv);
             
-            // Auto-remove after 5 seconds
             setTimeout(() => {
                 if (alertDiv.parentNode) {
                     alertDiv.parentNode.removeChild(alertDiv);
