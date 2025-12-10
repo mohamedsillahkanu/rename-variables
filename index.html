@@ -436,7 +436,7 @@
             background-color: #28a745;
         }
 
-        .column-type-badge.text {
+        .column-type-badge.categorical {
             background-color: #dc3545;
         }
 
@@ -884,7 +884,7 @@
                         </div>
                         <div class="stats-card">
                             <h3 id="textCount">0</h3>
-                            <p>Text</p>
+                            <p>Categorical</p>
                         </div>
                     </div>
                 </div>
@@ -1120,6 +1120,9 @@
                     complete: function(results) {
                         showProgress('Processing data...', 80);
                         setTimeout(() => {
+                            console.log('CSV Results:', results);
+                            console.log('CSV Data length:', results.data.length);
+                            console.log('CSV Meta:', results.meta);
                             processData(results.data, fileName);
                             hideProgress();
                         }, 500);
@@ -1158,6 +1161,9 @@
                                 defval: ''
                             });
                             
+                            console.log('Excel Raw Data:', jsonData);
+                            
+                            // Convert to proper object format with all columns
                             const headers = jsonData[0] || [];
                             const processedData = jsonData.slice(1).map(row => {
                                 const obj = {};
@@ -1166,6 +1172,9 @@
                                 });
                                 return obj;
                             });
+                            
+                            console.log('Excel Processed Data:', processedData);
+                            console.log('Excel Headers:', headers);
                             
                             showProgress('Finalizing...', 95);
                             setTimeout(() => {
@@ -1193,11 +1202,15 @@
         }
 
         function processData(data, fileName) {
+            console.log('Processing data:', data);
+            console.log('Data length:', data.length);
+            
             if (!data || data.length === 0) {
                 showAlert('The file appears to be empty or invalid.', 'error');
                 return;
             }
 
+            // Get ALL column names from the first row
             const firstRow = data[0];
             if (!firstRow || typeof firstRow !== 'object') {
                 showAlert('Invalid data format detected.', 'error');
@@ -1205,7 +1218,10 @@
             }
 
             originalColumns = Object.keys(firstRow);
+            console.log('All original columns found:', originalColumns);
+            console.log('Total columns count:', originalColumns.length);
             
+            // Filter out completely empty rows
             currentData = data.filter(row => {
                 return originalColumns.some(col => {
                     const value = row[col];
@@ -1213,6 +1229,8 @@
                 });
             });
 
+            console.log('Filtered data length:', currentData.length);
+            
             if (currentData.length === 0) {
                 showAlert('No valid data rows found in the file.', 'error');
                 return;
@@ -1220,10 +1238,14 @@
 
             showAlert('File uploaded successfully! Found ' + originalColumns.length + ' columns and ' + currentData.length + ' data rows.', 'success');
             
+            // Update file info
             updateFileStats(currentData, fileName);
+            
+            // Create interfaces
             createColumnRenameInterface();
             populateColumnSelector();
             
+            // Show sections
             document.getElementById('uploadSection').style.display = 'none';
             document.getElementById('featuresSection').style.display = 'none';
             document.getElementById('fileInfo').classList.remove('hidden');
@@ -1291,7 +1313,7 @@
             if (isNumericColumn(data, columnName)) {
                 return { type: 'Numeric', class: 'numeric' };
             }
-            return { type: 'Text', class: 'text' };
+            return { type: 'Categorical', class: 'categorical' };
         }
 
         function createColumnRenameInterface() {
