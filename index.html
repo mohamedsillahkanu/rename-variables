@@ -6,7 +6,6 @@
     <title>ICF-SL Variable & Value Rename Tool</title>
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -400,6 +399,7 @@
             justify-content: space-between;
             color: #000000;
             font-weight: 500;
+            word-break: break-word;
         }
 
         .column-new input {
@@ -430,6 +430,7 @@
             margin-left: 0.5rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            flex-shrink: 0;
         }
 
         .column-type-badge.numeric {
@@ -498,6 +499,7 @@
             border: 1px solid #004080;
             color: #004080;
             font-weight: 500;
+            word-break: break-word;
         }
 
         .value-count {
@@ -764,7 +766,6 @@
             color: #ffffff;
         }
 
-        /* Scrollbar styling */
         ::-webkit-scrollbar {
             width: 8px;
         }
@@ -847,11 +848,11 @@
 
                 <!-- Upload Section -->
                 <div id="uploadSection" class="upload-section">
-                    <h3>UPLOAD YOUR DATA FILE</h3>
-                    <p>Upload a CSV or Excel file to rename its column variables and values</p>
+                    <h3>UPLOAD YOUR EXCEL FILE</h3>
+                    <p>Upload an Excel file (.xlsx or .xls) to rename its column variables and values</p>
                     <label class="file-input-wrapper">
-                        Choose File
-                        <input type="file" id="fileInput" accept=".csv,.xlsx,.xls">
+                        Choose Excel File
+                        <input type="file" id="fileInput" accept=".xlsx,.xls">
                     </label>
                     
                     <!-- Progress Bar -->
@@ -859,7 +860,7 @@
                         <div class="progress-bar">
                             <div id="progressFill" class="progress-fill"></div>
                         </div>
-                        <div id="progressText" class="progress-text">Uploading...</div>
+                        <div id="progressText" class="progress-text">Reading file...</div>
                     </div>
                 </div>
 
@@ -869,6 +870,7 @@
                         <span class="section-icon">📊</span>
                         <span class="section-title">FILE STATISTICS</span>
                     </div>
+                    <div id="fileNameInfo" class="info-message" style="margin-bottom: 1rem;"></div>
                     <div class="stats-grid">
                         <div class="stats-card">
                             <h3 id="rowCount">0</h3>
@@ -990,7 +992,6 @@
                     
                     <h4 style="color: #004080; margin: 1.5rem 0 1rem;">Download Renamed Dataset</h4>
                     <div class="download-section">
-                        <button class="btn btn-gold" onclick="downloadCSV()">Download as CSV</button>
                         <button class="btn btn-primary" onclick="downloadExcel()">Download as Excel</button>
                     </div>
                     
@@ -1010,7 +1011,7 @@
                         <div class="feature-card">
                             <h4>Column Renaming</h4>
                             <ol>
-                                <li><strong>Upload File:</strong> CSV or Excel file with your data</li>
+                                <li><strong>Upload File:</strong> Excel file (.xlsx or .xls)</li>
                                 <li><strong>View Columns:</strong> See all column names with their data types</li>
                                 <li><strong>Enter New Names:</strong> Type new names for columns you want to rename</li>
                                 <li><strong>Apply Changes:</strong> Generate dataset with new column names</li>
@@ -1028,16 +1029,14 @@
                         </div>
                         
                         <div class="feature-card">
-                            <h4>Features</h4>
+                            <h4>Why Excel Only?</h4>
                             <ul>
-                                <li>Visual column type indicators</li>
-                                <li>Value frequency counts</li>
-                                <li>Bulk find/replace operations</li>
-                                <li>Text transformations (case changes)</li>
-                                <li>Duplicate validation</li>
-                                <li>Before/after comparison</li>
-                                <li>Excel and CSV downloads</li>
-                                <li>ALL columns preserved and displayed</li>
+                                <li>Preserves column names exactly</li>
+                                <li>No delimiter confusion</li>
+                                <li>Handles commas in column names</li>
+                                <li>Handles special characters</li>
+                                <li>More reliable data reading</li>
+                                <li>Industry standard format</li>
                             </ul>
                         </div>
                     </div>
@@ -1061,6 +1060,7 @@
         let columnRenameMapping = {};
         let valueRenameMapping = {};
         let activeTab = 'columns';
+        let currentFileName = '';
 
         document.getElementById('fileInput').addEventListener('change', handleFileUpload);
 
@@ -1084,21 +1084,9 @@
             progressText.textContent = text;
         }
 
-        function updateProgress(percentage) {
-            const progressFill = document.getElementById('progressFill');
-            progressFill.style.width = Math.min(percentage, 100) + '%';
-        }
-
         function hideProgress() {
             const progressContainer = document.getElementById('progressContainer');
             progressContainer.classList.add('hidden');
-            
-            setTimeout(() => {
-                const progressFill = document.getElementById('progressFill');
-                const progressText = document.getElementById('progressText');
-                progressFill.style.width = '0%';
-                progressText.textContent = 'Uploading...';
-            }, 300);
         }
 
         function handleFileUpload(event) {
@@ -1108,143 +1096,128 @@
             const fileName = file.name;
             const fileExtension = fileName.split('.').pop().toLowerCase();
 
-            showProgress('Uploading file...', 10);
-
-            if (fileExtension === 'csv') {
-                showProgress('Reading CSV file...', 30);
-                
-                Papa.parse(file, {
-                    header: true,
-                    skipEmptyLines: true,
-                    dynamicTyping: false,
-                    complete: function(results) {
-                        showProgress('Processing data...', 80);
-                        setTimeout(() => {
-                            console.log('CSV Results:', results);
-                            console.log('CSV Data length:', results.data.length);
-                            console.log('CSV Meta:', results.meta);
-                            processData(results.data, fileName);
-                            hideProgress();
-                        }, 500);
-                    },
-                    error: function(error) {
-                        hideProgress();
-                        showAlert('Error reading CSV file: ' + error.message, 'error');
-                    },
-                    step: function(row, parser) {
-                        const progress = Math.min(30 + (parser.cursor / file.size) * 40, 70);
-                        updateProgress(progress);
-                    }
-                });
-            } else if (['xlsx', 'xls'].includes(fileExtension)) {
-                showProgress('Reading Excel file...', 30);
-                
-                const reader = new FileReader();
-                
-                reader.onprogress = function(e) {
-                    if (e.lengthComputable) {
-                        const progress = 30 + (e.loaded / e.total) * 40;
-                        updateProgress(progress);
-                    }
-                };
-                
-                reader.onload = function(e) {
-                    try {
-                        showProgress('Processing Excel data...', 80);
-                        
-                        setTimeout(() => {
-                            const data = new Uint8Array(e.target.result);
-                            const workbook = XLSX.read(data, {type: 'array'});
-                            const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                            const jsonData = XLSX.utils.sheet_to_json(firstSheet, {
-                                header: 1,
-                                defval: ''
-                            });
-                            
-                            console.log('Excel Raw Data:', jsonData);
-                            
-                            // Convert to proper object format with all columns
-                            const headers = jsonData[0] || [];
-                            const processedData = jsonData.slice(1).map(row => {
-                                const obj = {};
-                                headers.forEach((header, index) => {
-                                    obj[header] = row[index] || '';
-                                });
-                                return obj;
-                            });
-                            
-                            console.log('Excel Processed Data:', processedData);
-                            console.log('Excel Headers:', headers);
-                            
-                            showProgress('Finalizing...', 95);
-                            setTimeout(() => {
-                                processData(processedData, fileName);
-                                hideProgress();
-                            }, 300);
-                        }, 200);
-                    } catch (error) {
-                        hideProgress();
-                        showAlert('Error reading Excel file: ' + error.message, 'error');
-                    }
-                };
-                
-                reader.onerror = function() {
-                    hideProgress();
-                    showAlert('Error reading file', 'error');
-                };
-                
-                reader.readAsArrayBuffer(file);
-            } else {
-                hideProgress();
-                showAlert('Unsupported file type. Please upload CSV or Excel files.', 'error');
+            // Check if it's an Excel file
+            if (!['xlsx', 'xls'].includes(fileExtension)) {
+                showAlert('Please upload an Excel file (.xlsx or .xls)', 'error');
                 return;
             }
+
+            currentFileName = fileName;
+            showProgress('Reading Excel file...', 30);
+
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                try {
+                    showProgress('Processing data...', 60);
+
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheetName = workbook.SheetNames[0];
+                    const firstSheet = workbook.Sheets[firstSheetName];
+
+                    // Get raw data - header row first
+                    const jsonData = XLSX.utils.sheet_to_json(firstSheet, {
+                        header: 1,
+                        defval: '',
+                        raw: false,
+                        blankrows: false
+                    });
+
+                    console.log('Excel data loaded:', jsonData);
+
+                    if (jsonData.length === 0) {
+                        hideProgress();
+                        showAlert('Excel file appears to be empty.', 'error');
+                        return;
+                    }
+
+                    showProgress('Building dataset...', 80);
+
+                    // First row is headers - preserve exactly
+                    const headers = jsonData[0].map(h => {
+                        if (h === null || h === undefined) return '';
+                        return String(h).trim();
+                    }).filter(h => h !== '');
+
+                    console.log('Headers found:', headers);
+
+                    if (headers.length === 0) {
+                        hideProgress();
+                        showAlert('No column headers found in the first row.', 'error');
+                        return;
+                    }
+
+                    // Convert data rows to objects
+                    const processedData = [];
+                    for (let i = 1; i < jsonData.length; i++) {
+                        const row = jsonData[i];
+                        
+                        // Check if row has any data
+                        const hasData = row.some(cell => 
+                            cell !== null && cell !== undefined && String(cell).trim() !== ''
+                        );
+                        
+                        if (hasData) {
+                            const obj = {};
+                            headers.forEach((header, index) => {
+                                const value = row[index];
+                                obj[header] = value !== undefined && value !== null ? String(value) : '';
+                            });
+                            processedData.push(obj);
+                        }
+                    }
+
+                    console.log('Processed rows:', processedData.length);
+
+                    showProgress('Finalizing...', 95);
+
+                    setTimeout(() => {
+                        processData(processedData, headers, fileName);
+                        hideProgress();
+                    }, 200);
+
+                } catch (error) {
+                    hideProgress();
+                    console.error('Excel error:', error);
+                    showAlert('Error reading Excel file: ' + error.message, 'error');
+                }
+            };
+
+            reader.onerror = function() {
+                hideProgress();
+                showAlert('Error reading file', 'error');
+            };
+
+            reader.readAsArrayBuffer(file);
         }
 
-        function processData(data, fileName) {
-            console.log('Processing data:', data);
-            console.log('Data length:', data.length);
-            
+        function processData(data, headers, fileName) {
             if (!data || data.length === 0) {
-                showAlert('The file appears to be empty or invalid.', 'error');
+                showAlert('No data rows found in the file.', 'error');
                 return;
             }
 
-            // Get ALL column names from the first row
-            const firstRow = data[0];
-            if (!firstRow || typeof firstRow !== 'object') {
-                showAlert('Invalid data format detected.', 'error');
-                return;
-            }
+            originalColumns = headers;
+            currentData = data;
 
-            originalColumns = Object.keys(firstRow);
-            console.log('All original columns found:', originalColumns);
-            console.log('Total columns count:', originalColumns.length);
-            
-            // Filter out completely empty rows
-            currentData = data.filter(row => {
-                return originalColumns.some(col => {
-                    const value = row[col];
-                    return value !== null && value !== undefined && value !== '';
-                });
-            });
+            console.log('Final columns:', originalColumns);
+            console.log('Final rows:', currentData.length);
 
-            console.log('Filtered data length:', currentData.length);
-            
-            if (currentData.length === 0) {
-                showAlert('No valid data rows found in the file.', 'error');
-                return;
-            }
+            // Show file info
+            document.getElementById('fileNameInfo').innerHTML = 
+                `<strong>File:</strong> ${fileName}<br>` +
+                `<strong>Sheet:</strong> First sheet`;
 
-            showAlert('File uploaded successfully! Found ' + originalColumns.length + ' columns and ' + currentData.length + ' data rows.', 'success');
-            
-            // Update file info
-            updateFileStats(currentData, fileName);
-            
+            showAlert(`Loaded ${originalColumns.length} columns and ${currentData.length} rows.`, 'success');
+
+            // Update stats
+            updateFileStats();
+
             // Create interfaces
             createColumnRenameInterface();
             populateColumnSelector();
-            
+
             // Show sections
             document.getElementById('uploadSection').style.display = 'none';
             document.getElementById('featuresSection').style.display = 'none';
@@ -1252,14 +1225,14 @@
             document.getElementById('renameSection').classList.remove('hidden');
         }
 
-        function updateFileStats(data, fileName) {
-            const rowCount = data.length;
+        function updateFileStats() {
+            const rowCount = currentData.length;
             const colCount = originalColumns.length;
             let numericCount = 0;
             let textCount = 0;
 
             originalColumns.forEach(col => {
-                if (isNumericColumn(data, col)) {
+                if (isNumericColumn(col)) {
                     numericCount++;
                 } else {
                     textCount++;
@@ -1273,44 +1246,31 @@
             document.getElementById('totalColumnsFound').textContent = colCount;
         }
 
-        function isNumericColumn(data, columnName) {
+        function isNumericColumn(columnName) {
             let numericCount = 0;
             let textCount = 0;
-            
-            // Check all rows (up to 200 for performance)
-            for (let i = 0; i < data.length; i++) {
-                const value = data[i][columnName];
-                
-                // Skip empty, null, undefined values completely - don't count them
-                if (value === null || value === undefined) continue;
-                if (String(value).trim() === '') continue;
-                
-                // Check if it's a number
-                if (typeof value === 'number') {
+
+            const sampleSize = Math.min(currentData.length, 100);
+            for (let i = 0; i < sampleSize; i++) {
+                const value = currentData[i][columnName];
+
+                if (value === null || value === undefined || String(value).trim() === '') continue;
+
+                const strValue = String(value).trim();
+                const parsed = parseFloat(strValue.replace(/,/g, ''));
+
+                if (!isNaN(parsed) && /^-?[\d,]*\.?\d*$/.test(strValue.replace(/,/g, ''))) {
                     numericCount++;
                 } else {
-                    // Try to parse as number
-                    const strValue = String(value).trim();
-                    const parsed = parseFloat(strValue);
-                    
-                    // It's numeric if it parses and the string looks like a number
-                    if (!isNaN(parsed) && /^-?\d*\.?\d+$/.test(strValue)) {
-                        numericCount++;
-                    } else {
-                        textCount++;
-                    }
+                    textCount++;
                 }
-                
-                // Stop after checking 200 rows for performance
-                if (i >= 200) break;
             }
-            
-            // Column is numeric if it has numeric values and more numeric than text
+
             return numericCount > 0 && numericCount >= textCount;
         }
 
-        function getColumnType(data, columnName) {
-            if (isNumericColumn(data, columnName)) {
+        function getColumnType(columnName) {
+            if (isNumericColumn(columnName)) {
                 return { type: 'Numeric', class: 'numeric' };
             }
             return { type: 'Categorical', class: 'categorical' };
@@ -1321,21 +1281,23 @@
             container.innerHTML = '';
 
             originalColumns.forEach((column, index) => {
-                const columnType = getColumnType(currentData, column);
-                
+                const columnType = getColumnType(column);
+
                 const row = document.createElement('div');
                 row.className = 'column-rename-row';
-                
+
+                const safeColumn = column.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
                 row.innerHTML = `
                     <div class="column-original">
-                        <strong>${column}</strong>
+                        <strong>${safeColumn}</strong>
                         <span class="column-type-badge ${columnType.class}">${columnType.type}</span>
                     </div>
                     <div class="column-new">
-                        <input type="text" id="rename_${index}" placeholder="Enter new name for '${column}'">
+                        <input type="text" id="rename_${index}" placeholder="Enter new name...">
                     </div>
                 `;
-                
+
                 container.appendChild(row);
             });
         }
@@ -1343,7 +1305,7 @@
         function populateColumnSelector() {
             const select = document.getElementById('valueColumnSelect');
             select.innerHTML = '<option value="">Choose a column to rename its values...</option>';
-            
+
             originalColumns.forEach(column => {
                 const option = document.createElement('option');
                 option.value = column;
@@ -1362,7 +1324,7 @@
             const valueCounts = {};
             currentData.forEach(row => {
                 const value = row[selectedColumn];
-                const key = value === null || value === undefined || value === '' ? '[EMPTY]' : String(value);
+                const key = value === null || value === undefined || String(value).trim() === '' ? '[EMPTY]' : String(value);
                 valueCounts[key] = (valueCounts[key] || 0) + 1;
             });
 
@@ -1374,18 +1336,20 @@
             sortedValues.forEach(([value, count], index) => {
                 const row = document.createElement('div');
                 row.className = 'value-item';
-                
+
+                const safeValue = value.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
                 row.innerHTML = `
-                    <div class="value-original">${value}</div>
+                    <div class="value-original">${safeValue}</div>
                     <div class="value-new">
-                        <input type="text" id="value_${selectedColumn}_${index}" 
-                               placeholder="Enter new value for '${value}'" 
-                               data-original="${value}" 
+                        <input type="text" id="value_${index}" 
+                               placeholder="Enter new value..." 
+                               data-original="${value.replace(/"/g, '&quot;')}" 
                                data-column="${selectedColumn}">
                     </div>
                     <div class="value-count">${count}</div>
                 `;
-                
+
                 container.appendChild(row);
             });
 
@@ -1395,7 +1359,7 @@
         function bulkReplace() {
             const findText = document.getElementById('findText').value;
             const replaceText = document.getElementById('replaceText').value;
-            
+
             if (!findText) {
                 showAlert('Please enter text to find', 'warning');
                 return;
@@ -1432,7 +1396,7 @@
                 const originalValue = input.getAttribute('data-original');
                 let newValue = originalValue;
 
-                switch(transform) {
+                switch (transform) {
                     case 'uppercase':
                         newValue = originalValue.toUpperCase();
                         break;
@@ -1443,7 +1407,7 @@
                         newValue = originalValue.charAt(0).toUpperCase() + originalValue.slice(1).toLowerCase();
                         break;
                     case 'title':
-                        newValue = originalValue.replace(/\w\S*/g, (txt) => 
+                        newValue = originalValue.replace(/\w\S*/g, (txt) =>
                             txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
                         break;
                 }
@@ -1496,88 +1460,43 @@
                 return;
             }
 
-            const validation = validateAllChanges(columnRenames, valueRenames);
-            
-            if (validation.errors.length > 0) {
-                validation.errors.forEach(error => {
-                    showAlert(error, 'error');
-                });
+            // Validate for duplicates
+            const newColumnNames = Object.values(columnRenames);
+            const allFinalColumnNames = [...newColumnNames, ...originalColumns.filter(col => !columnRenames[col])];
+            const duplicates = allFinalColumnNames.filter((name, index) => allFinalColumnNames.indexOf(name) !== index);
+
+            if (duplicates.length > 0) {
+                showAlert(`Duplicate column name found: ${duplicates[0]}`, 'error');
                 return;
             }
 
-            if (validation.warnings.length > 0) {
-                validation.warnings.forEach(warning => {
-                    showAlert(warning, 'warning');
-                });
-            }
-
             try {
-                renamedData = applyAllRenames(currentData, columnRenames, valueRenames);
+                renamedData = currentData.map(row => {
+                    const newRow = {};
+
+                    originalColumns.forEach(key => {
+                        const value = row[key];
+                        const newKey = columnRenames[key] || key;
+
+                        let newValue = value;
+                        if (valueRenames[key] && valueRenames[key][value] !== undefined) {
+                            newValue = valueRenames[key][value];
+                        }
+
+                        newRow[newKey] = newValue;
+                    });
+
+                    return newRow;
+                });
+
                 columnRenameMapping = columnRenames;
                 valueRenameMapping = valueRenames;
-                
+
                 showAlert('All changes applied successfully!', 'success');
                 showResults();
             } catch (error) {
                 showAlert('Error applying changes: ' + error.message, 'error');
             }
-        }
-
-        function validateAllChanges(columnRenames, valueRenames) {
-            const errors = [];
-            const warnings = [];
-
-            const newColumnNames = Object.values(columnRenames);
-            const allFinalColumnNames = [...newColumnNames, ...originalColumns.filter(col => !columnRenames[col])];
-
-            const columnNameCount = {};
-            allFinalColumnNames.forEach(name => {
-                columnNameCount[name] = (columnNameCount[name] || 0) + 1;
-            });
-
-            Object.entries(columnNameCount).forEach(([name, count]) => {
-                if (count > 1) {
-                    errors.push(`Duplicate column name '${name}' found`);
-                }
-            });
-
-            const invalidChars = ['/', '\\', '?', '*', '[', ']', ':', '<', '>', '|'];
-            Object.entries(columnRenames).forEach(([oldName, newName]) => {
-                if (invalidChars.some(char => newName.includes(char))) {
-                    warnings.push(`Column '${newName}' contains special characters that may cause issues`);
-                }
-            });
-
-            Object.entries(valueRenames).forEach(([column, renames]) => {
-                const newValues = Object.values(renames);
-                const duplicateValues = newValues.filter((value, index) => newValues.indexOf(value) !== index);
-                
-                if (duplicateValues.length > 0) {
-                    warnings.push(`Column '${column}' will have duplicate values after renaming: ${duplicateValues.join(', ')}`);
-                }
-            });
-
-            return { errors, warnings };
-        }
-
-        function applyAllRenames(data, columnRenames, valueRenames) {
-            return data.map(row => {
-                const newRow = {};
-                
-                originalColumns.forEach(key => {
-                    const value = row[key];
-                    const newKey = columnRenames[key] || key;
-                    
-                    let newValue = value;
-                    if (valueRenames[key] && valueRenames[key][value] !== undefined) {
-                        newValue = valueRenames[key][value];
-                    }
-                    
-                    newRow[newKey] = newValue;
-                });
-                
-                return newRow;
-            });
         }
 
         function showResults() {
@@ -1586,12 +1505,12 @@
 
             const summaryContainer = document.getElementById('renameSummary');
             summaryContainer.innerHTML = '';
-            
+
             if (Object.keys(columnRenameMapping).length > 0) {
                 Object.entries(columnRenameMapping).forEach(([oldName, newName]) => {
                     const div = document.createElement('div');
                     div.className = 'rename-summary';
-                    div.innerHTML = `<strong>Column Renamed:</strong> <code>${oldName}</code> → <code>${newName}</code>`;
+                    div.innerHTML = `<strong>Column:</strong> <code>${oldName}</code> → <code>${newName}</code>`;
                     summaryContainer.appendChild(div);
                 });
             }
@@ -1601,24 +1520,19 @@
                     Object.entries(renames).forEach(([oldValue, newValue]) => {
                         const div = document.createElement('div');
                         div.className = 'value-summary';
-                        div.innerHTML = `<strong>Value Renamed in '${column}':</strong> <code>${oldValue}</code> → <code>${newValue}</code>`;
+                        div.innerHTML = `<strong>Value in '${column}':</strong> <code>${oldValue}</code> → <code>${newValue}</code>`;
                         summaryContainer.appendChild(div);
                     });
                 }
             });
 
             const totalColumnRenames = Object.keys(columnRenameMapping).length;
-            const totalValueRenames = Object.values(valueRenameMapping).reduce((total, renames) => 
+            const totalValueRenames = Object.values(valueRenameMapping).reduce((total, renames) =>
                 total + Object.keys(renames).length, 0);
-            const totalUnchangedColumns = originalColumns.length - totalColumnRenames;
-            
+
             summaryContainer.insertAdjacentHTML('beforeend', `
                 <div class="info-message" style="margin-top: 1rem;">
-                    <p style="margin: 0;"><strong>Summary:</strong></p>
-                    <p style="margin: 0.25rem 0;"><strong>Total original columns:</strong> ${originalColumns.length}</p>
-                    <p style="margin: 0.25rem 0;"><strong>Columns renamed:</strong> ${totalColumnRenames}</p>
-                    <p style="margin: 0.25rem 0;"><strong>Values renamed:</strong> ${totalValueRenames}</p>
-                    <p style="margin: 0.25rem 0;"><strong>Unchanged columns:</strong> ${totalUnchangedColumns}</p>
+                    <strong>Summary:</strong> ${totalColumnRenames} columns renamed, ${totalValueRenames} values renamed
                 </div>
             `);
 
@@ -1630,29 +1544,27 @@
             const table = document.getElementById('dataTable');
             table.innerHTML = '';
 
-            if (!renamedData || renamedData.length === 0) {
-                return;
-            }
+            if (!renamedData || renamedData.length === 0) return;
 
             const allColumns = Object.keys(renamedData[0]);
             document.getElementById('displayedColumns').textContent = allColumns.length;
 
             const thead = document.createElement('thead');
             const headerRow = document.createElement('tr');
-            
+
             allColumns.forEach(column => {
                 const th = document.createElement('th');
                 th.textContent = column;
-                th.title = `Column: ${column}`;
+                th.title = column;
                 headerRow.appendChild(th);
             });
-            
+
             thead.appendChild(headerRow);
             table.appendChild(thead);
 
             const tbody = document.createElement('tbody');
             const displayData = renamedData.slice(0, 100);
-            
+
             displayData.forEach(row => {
                 const tr = document.createElement('tr');
                 allColumns.forEach(column => {
@@ -1664,20 +1576,14 @@
                 });
                 tbody.appendChild(tr);
             });
-            
-            table.appendChild(tbody);
 
-            const noteText = renamedData.length > 100 
-                ? `Showing first 100 rows of ${renamedData.length} total rows. All ${allColumns.length} columns are displayed.`
-                : `Showing all ${renamedData.length} rows and all ${allColumns.length} columns.`;
-            
-            table.insertAdjacentHTML('afterend', `<p style="color: #666; padding: 1rem; text-align: center; font-size: 13px;"><em>${noteText}</em></p>`);
+            table.appendChild(tbody);
         }
 
         function showColumnComparison() {
             const originalContainer = document.getElementById('originalColumns');
             const newContainer = document.getElementById('newColumns');
-            
+
             originalContainer.innerHTML = '';
             newContainer.innerHTML = '';
 
@@ -1687,7 +1593,7 @@
             originalColumns.forEach(col => {
                 const div = document.createElement('div');
                 div.className = 'column-item';
-                const status = columnRenameMapping[col] ? '→ Renamed' : '✓ Unchanged';
+                const status = columnRenameMapping[col] ? '→' : '✓';
                 div.innerHTML = `<code>${col}</code> ${status}`;
                 originalContainer.appendChild(div);
             });
@@ -1695,33 +1601,9 @@
             Object.keys(renamedData[0]).forEach(col => {
                 const div = document.createElement('div');
                 div.className = 'column-item';
-                
-                const originalName = Object.entries(columnRenameMapping).find(([old, new_]) => new_ === col)?.[0];
-                
-                if (originalName) {
-                    div.innerHTML = `<code>${col}</code> ← Renamed from <code>${originalName}</code>`;
-                } else {
-                    div.innerHTML = `<code>${col}</code> ✓ Unchanged`;
-                }
-                
+                div.innerHTML = `<code>${col}</code>`;
                 newContainer.appendChild(div);
             });
-        }
-
-        function downloadCSV() {
-            if (!renamedData) return;
-            
-            const csv = Papa.unparse(renamedData);
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `renamed_dataset_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.csv`;
-            a.click();
-            
-            URL.revokeObjectURL(url);
-            showAlert('CSV file downloaded with all ' + Object.keys(renamedData[0]).length + ' columns!', 'success');
         }
 
         function downloadExcel() {
@@ -1731,15 +1613,15 @@
             const ws = XLSX.utils.json_to_sheet(renamedData);
             XLSX.utils.book_append_sheet(wb, ws, 'Renamed_Data');
 
+            // Add change log sheet
             const logData = [];
-            
+
             Object.entries(columnRenameMapping).forEach(([oldName, newName]) => {
                 logData.push({
                     Type: 'Column Rename',
-                    Column: oldName,
-                    Original_Value: oldName,
-                    New_Value: newName,
-                    Change_Date: new Date().toISOString()
+                    Original: oldName,
+                    New: newName,
+                    Date: new Date().toISOString()
                 });
             });
 
@@ -1748,20 +1630,21 @@
                     logData.push({
                         Type: 'Value Rename',
                         Column: column,
-                        Original_Value: oldValue,
-                        New_Value: newValue,
-                        Change_Date: new Date().toISOString()
+                        Original: oldValue,
+                        New: newValue,
+                        Date: new Date().toISOString()
                     });
                 });
             });
-            
+
             if (logData.length > 0) {
                 const logWs = XLSX.utils.json_to_sheet(logData);
                 XLSX.utils.book_append_sheet(wb, logWs, 'Change_Log');
             }
 
-            XLSX.writeFile(wb, `renamed_dataset_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.xlsx`);
-            showAlert('Excel file downloaded with all ' + Object.keys(renamedData[0]).length + ' columns!', 'success');
+            const baseName = currentFileName.replace(/\.[^/.]+$/, '');
+            XLSX.writeFile(wb, `${baseName}_renamed.xlsx`);
+            showAlert('Excel file downloaded!', 'success');
         }
 
         function backToRename() {
@@ -1776,7 +1659,8 @@
             columnRenameMapping = {};
             valueRenameMapping = {};
             activeTab = 'columns';
-            
+            currentFileName = '';
+
             document.getElementById('uploadSection').style.display = 'block';
             document.getElementById('featuresSection').style.display = 'block';
             document.getElementById('fileInfo').classList.add('hidden');
@@ -1785,7 +1669,7 @@
             document.getElementById('valueRenameContainer').classList.add('hidden');
             document.getElementById('fileInput').value = '';
             document.getElementById('alertContainer').innerHTML = '';
-            
+
             switchTab('columns');
         }
 
@@ -1794,9 +1678,9 @@
             const alertDiv = document.createElement('div');
             alertDiv.className = `alert alert-${type}`;
             alertDiv.textContent = message;
-            
+
             alertContainer.appendChild(alertDiv);
-            
+
             setTimeout(() => {
                 if (alertDiv.parentNode) {
                     alertDiv.parentNode.removeChild(alertDiv);
