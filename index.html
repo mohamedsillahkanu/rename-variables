@@ -1113,6 +1113,8 @@
             if (fileExtension === 'csv') {
                 showProgress('Reading CSV file...', 30);
                 
+                // FIX: Removed the 'step' callback which was causing results.data to be empty
+                // When using 'step', Papa Parse streams data row by row and doesn't populate results.data
                 Papa.parse(file, {
                     header: true,
                     skipEmptyLines: true,
@@ -1123,6 +1125,11 @@
                             console.log('CSV Results:', results);
                             console.log('CSV Data length:', results.data.length);
                             console.log('CSV Meta:', results.meta);
+                            
+                            if (results.errors && results.errors.length > 0) {
+                                console.log('CSV Parsing Errors:', results.errors);
+                            }
+                            
                             processData(results.data, fileName);
                             hideProgress();
                         }, 500);
@@ -1130,11 +1137,8 @@
                     error: function(error) {
                         hideProgress();
                         showAlert('Error reading CSV file: ' + error.message, 'error');
-                    },
-                    step: function(row, parser) {
-                        const progress = Math.min(30 + (parser.cursor / file.size) * 40, 70);
-                        updateProgress(progress);
                     }
+                    // NOTE: 'step' callback removed - it was preventing data from being available in 'complete'
                 });
             } else if (['xlsx', 'xls'].includes(fileExtension)) {
                 showProgress('Reading Excel file...', 30);
@@ -1168,7 +1172,7 @@
                             const processedData = jsonData.slice(1).map(row => {
                                 const obj = {};
                                 headers.forEach((header, index) => {
-                                    obj[header] = row[index] || '';
+                                    obj[header] = row[index] !== undefined ? row[index] : '';
                                 });
                                 return obj;
                             });
